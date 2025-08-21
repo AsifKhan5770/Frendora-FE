@@ -8,6 +8,9 @@ let Navbar = () => {
         <Link className="navbar-brand fw-bold text-pink" to="/">
           Frendora
         </Link>
+         <Link className="navbar-brand fw-bold text-pink" to="/login">
+          login
+        </Link>
 
         {/* Toggle button (mobile) */}
         <button
@@ -25,27 +28,7 @@ let Navbar = () => {
         {/* Collapse section */}
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           {/* Left nav links */}
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                Posts
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/create">
-                Add Posts
-              </Link>
-            </li>
-          </ul>
-
-          {/* Search bar */}
-          <form className="d-flex me-3" role="search">
-            <input
-              className="form-control me-2 search-input"
-              type="search"
-              placeholder="Search"
-            />
-          </form>
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
 
           {/* Profile dropdown */}
           <div className="dropdown">

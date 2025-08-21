@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 let Editpost = () => {
-  let [formData, setFormData] = useState({ title: "", description: "", author: "" });
+  let [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    author: "",
+  });
 
   let { id } = useParams();
   let navigate = useNavigate();
@@ -53,53 +57,55 @@ let Editpost = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Edit post</h2>
-      {formData ? (
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label className="form-label">Post Title</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="form-control"
-              required
-            />
-          </div>
+    <>
+      <div className="container-fluid mt-5 pt-4">
+        <h2 className="text-center">Edit Post</h2>
+        {formData ? (
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label">Post Title</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="form-control"
-              required
-            ></textarea>
-          </div>
+            <div className="mb-3">
+              <label className="form-label">Description</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                className="form-control"
+                required
+              ></textarea>
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Author</label>
-            <input
-              type="text"
-              name="author"
-              value={formData.author}
-              onChange={handleChange}
-              className="form-control"
-              required
-            />
-          </div>
+            <div className="mb-3">
+              <label className="form-label">Author</label>
+              <input
+                type="text"
+                name="author"
+                value={formData.author}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
 
-          <button type="submit" className="btn btn-primary">
-            Update post
-          </button>
-        </form>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
+            <button type="submit" className="btn btn-pink">
+              Update post
+            </button>
+          </form>
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
+    </>
   );
 };
 
