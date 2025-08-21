@@ -1,68 +1,120 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 let Signup = () => {
+  let navigate = useNavigate();
+
+  let [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+
+  let [error, setError] = useState("");
+  let [success, setSuccess] = useState("");
+
+  // Handle input changes
+  let handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle submit
+  let handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    // Basic password match check
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    try {
+      let res = await fetch("http://localhost:3001/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      let data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      setSuccess("Account created successfully!");
+      setTimeout(() => navigate("/login"), 2000); // redirect after success
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <main className="card" role="main" aria-label="Sign up for Frendora">
       <div className="brand" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="3" y="5" width="18" height="16" rx="5" stroke="#111827" strokeWidth="1.5"/>
-          <path d="M8 5.5l1.2-2a2 2 0 0 1 1.7-1h2.2a2 2 0 0 1 1.7 1l1.2 2" stroke="#111827" strokeWidth="1.5"/>
-          <circle cx="12" cy="13" r="4" stroke="#111827" strokeWidth="1.5"/>
-          <circle cx="18.5" cy="9.5" r="1" fill="#111827"/>
-        </svg>
         <h1>Frendora</h1>
       </div>
 
-      <form autoComplete="on" noValidate>
+      <form autoComplete="on" noValidate onSubmit={handleSubmit}>
         <label className="field">
-          <span className="icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M3 21a9 9 0 1 1 18 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </span>
-          <input name="fullname" type="text" placeholder="Full Name" aria-label="Full Name" required />
+          <input
+            name="name"
+            type="text"
+            placeholder="Full Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <label className="field">
-          <span className="icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4h16v16H4z" fill="none"/>
-              <path d="M4 4h16v16H4z" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M4 8h16" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M8 4v16" stroke="currentColor" strokeWidth="1.5"/>
-            </svg>
-          </span>
-          <input name="email" type="email" placeholder="Email" aria-label="Email" required />
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <label className="field">
-          <span className="icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M7 11V8a5 5 0 1 1 10 0v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </span>
-          <input name="password" type="password" placeholder="Password" aria-label="Password" required />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <label className="field">
-          <span className="icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M7 11V8a5 5 0 1 1 10 0v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </span>
-          <input name="confirmPassword" type="password" placeholder="Confirm Password" aria-label="Confirm Password" required />
+          <input
+            name="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <div className="actions">
-          <button className="btn" type="submit" aria-label="Sign up to Frendora">Sign Up</button>
+          <button className="btn" type="submit">
+            Sign Up
+          </button>
         </div>
 
-        <p className="helper">Already have an account? <Link to="/login">Log in</Link></p>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {success && <p style={{ color: "green" }}>{success}</p>}
 
-        <p className="legal">By signing up, you agree to our Terms & Privacy Policy.</p>
+        <p className="helper">
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
       </form>
     </main>
   );
