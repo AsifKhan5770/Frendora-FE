@@ -201,7 +201,6 @@ body{
               radial-gradient(1000px 700px at 100% 0%, var(--bg-mid) 0%, transparent 45%),
               linear-gradient(160deg, var(--bg-start) 0%, var(--bg-mid) 45%, var(--bg-end) 100%);
   display:grid;
-  place-items:center;
   padding:24px;
 }
 .card{

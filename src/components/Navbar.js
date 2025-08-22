@@ -8,10 +8,6 @@ let Navbar = () => {
         <Link className="navbar-brand fw-bold text-pink" to="/">
           Frendora
         </Link>
-         <Link className="navbar-brand fw-bold text-pink" to="/login">
-          login
-        </Link>
-
         {/* Toggle button (mobile) */}
         <button
           className="navbar-toggler"
@@ -43,11 +39,6 @@ let Navbar = () => {
               <li>
                 <Link className="dropdown-item" to="/profile">
                   Profile
-                </Link>
-              </li>
-              <li>
-                <Link className="dropdown-item" to="/settings">
-                  Settings
                 </Link>
               </li>
               <li>

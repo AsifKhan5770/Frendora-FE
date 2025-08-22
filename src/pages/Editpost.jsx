@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-let Editpost = () => {
+let EditPost = () => {
   let [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -109,4 +109,4 @@ let Editpost = () => {
   );
 };
 
-export default Editpost;
+export default EditPost;

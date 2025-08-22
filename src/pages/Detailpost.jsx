@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-let Detailposts = () => {
+let DetailPost = () => {
   const [data, setData] = useState(null);
   const { id } = useParams();
 
@@ -50,4 +50,4 @@ let Detailposts = () => {
   );
 };
 
-export default Detailposts;
+export default DetailPost;

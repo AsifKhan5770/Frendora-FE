@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-let ListPosts = () => {
+let HomePage = () => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -39,30 +39,12 @@ let ListPosts = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
-
-    try {
-      const res = await fetch(`http://localhost:3001/api/posts/${id}`, {
-        method: "DELETE",
-      });
-
-      if (res.ok) {
-        setData((prev) => prev.filter((item) => item._id !== id));
-      } else {
-        console.error("Failed to delete post");
-      }
-    } catch (err) {
-      console.error("Error:", err);
-    }
-  };
-
   return (
     <>
       <div className="container-fluid mt-5 pt-4">
         {/* Top section: Search + Button */}
         <div className="row mb-3">
-          <div className="col-12 col-md-6 mb-2 mb-md-0">
+          <div className="col-12 mb-2 mb-md-0">
             <input
               type="text"
               placeholder="Search by title or author..."
@@ -70,11 +52,6 @@ let ListPosts = () => {
               value={search}
               onChange={handleSearch}
             />
-          </div>
-          <div className="col-12 col-md-6">
-            <Link to="/create" className="btn btn-pink w-100">
-              Create New Post
-            </Link>
           </div>
         </div>
 
@@ -96,18 +73,6 @@ let ListPosts = () => {
                     By <strong>{i.author}</strong>
                   </h6>
                   <p className="card-text flex-grow-1">{i.description}</p>
-                  <div className="mt-auto">
-                    <Link to={`/edit/${i._id}`} className="me-2">
-                      <i className="bi bi-pen" />
-                    </Link>
-                    <span
-                      role="button"
-                      style={{ cursor: "pointer", color: "red" }}
-                      onClick={() => handleDelete(i._id)}
-                    >
-                      <i className="bi bi-trash" />
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -118,4 +83,4 @@ let ListPosts = () => {
   );
 };
 
-export default ListPosts;
+export default HomePage;

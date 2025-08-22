@@ -1,75 +1,52 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-let Signup = () => {
+let UserLogin = () => {
   let navigate = useNavigate();
 
-  let [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
-
+  let [formData, setFormData] = useState({ email: "", password: "" });
   let [error, setError] = useState("");
   let [success, setSuccess] = useState("");
 
-  // Handle input changes
   let handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle submit
   let handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    // Basic password match check
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match!");
-      return;
-    }
-
     try {
-      let res = await fetch("http://localhost:3001/api/users", {
+      let res = await fetch("http://localhost:3001/api/users/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       let data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Something went wrong");
+        throw new Error(data.message || "Login failed");
       }
 
-      setSuccess("Account created successfully!");
-      setTimeout(() => navigate("/login"), 2000); // redirect after success
+      // ✅ Save logged in user only
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      setSuccess("Login successful!");
+      setTimeout(() => navigate("/profile"), 1000); // redirect to profile page
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <main className="card" role="main" aria-label="Sign up for Frendora">
+    <main className="card" role="main" aria-label="Login to Frendora">
       <div className="brand" aria-hidden="true">
         <h1>Frendora</h1>
       </div>
 
       <form autoComplete="on" noValidate onSubmit={handleSubmit}>
-        <label className="field">
-          <input
-            name="name"
-            type="text"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
         <label className="field">
           <input
             name="email"
@@ -92,32 +69,25 @@ let Signup = () => {
           />
         </label>
 
-        <label className="field">
-          <input
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
         <div className="actions">
           <button className="btn" type="submit">
-            Sign Up
+            Log In
           </button>
         </div>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
         {success && <p style={{ color: "green" }}>{success}</p>}
 
+        <p className="links">
+          <Link to="#">Forgot password?</Link>
+        </p>
+
         <p className="helper">
-          Already have an account? <Link to="/login">Log in</Link>
+          Don’t have an account? <Link to="/signup">Sign up</Link>
         </p>
       </form>
     </main>
   );
 };
 
-export default Signup;
+export default UserLogin;

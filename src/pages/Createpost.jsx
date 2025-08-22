@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-let Createpost = () => {
+let CreatePost = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -92,4 +92,4 @@ let Createpost = () => {
   );
 };
 
-export default Createpost;
+export default CreatePost;
