@@ -65,7 +65,7 @@ let Profile = () => {
   if (!user) return <h2 className="text-center mt-5">Loading profile...</h2>;
 
   return (
-    <div className="container-fluid mt-5">
+    <div className="container mt-5 pt-5 d-flex justify-content-center align-item-center">
       <div className="row justify-content-center">
         <div className="col">
           <div className="card shadow-lg p-4">

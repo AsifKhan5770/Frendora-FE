@@ -1,6 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 let Navbar = () => {
+ const navigate = useNavigate();
+
+  // Safely parse user from localStorage
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-glass fixed-top">
       <div className="container-fluid">
@@ -28,26 +39,46 @@ let Navbar = () => {
 
           {/* Profile dropdown */}
           <div className="dropdown">
+            {user ? (
             <img
               src="https://i.pravatar.cc/40?img=12"
               alt="profile"
               className="profile-avatar dropdown-toggle"
               data-bs-toggle="dropdown"
-              
             />
+            ):(
+              <Link to='/login'>
+                <img
+                src="https://icons.veryicon.com/png/o/miscellaneous/icon-icon-of-ai-intelligent-dispensing/login-user-name-1.png"
+                alt="profile"
+                className="profile-avatar"
+              />
+            </Link>
+            )}
+              {user && (
             <ul className="dropdown-menu dropdown-menu-end">
-              <li>
-                <Link className="dropdown-item" to="/profile">
-                  Profile
-                </Link>
-              </li>
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-              <li>
-                <button className="dropdown-item">Logout</button>
-              </li>
+                <>
+                  <li>
+                    <Link className="dropdown-item" to="/posts">
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/profile">
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <button className="dropdown-item" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </li>
+                </>
             </ul>
+              )}
           </div>
         </div>
       </div>

@@ -4,7 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 let UserSignup = () => {
   let navigate = useNavigate();
 
-let [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  let [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   let [error, setError] = useState("");
   let [success, setSuccess] = useState("");
@@ -57,77 +62,79 @@ let [formData, setFormData] = useState({ name: "", email: "", password: "", conf
       localStorage.setItem("user", JSON.stringify(data.user));
 
       setSuccess("Account created successfully!");
-      setTimeout(() => navigate("/login"), 2000); // redirect after success
+      setTimeout(() => navigate("/login"), 1000); // redirect after success
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <main className="card" role="main" aria-label="Sign up for Frendora">
-      <div className="brand" aria-hidden="true">
-        <h1>Frendora</h1>
-      </div>
-
-      <form autoComplete="on" noValidate onSubmit={handleSubmit}>
-        <label className="field">
-          <input
-            name="name"
-            type="text"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label className="field">
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label className="field">
-          <input
-            name="password"
-            type="password"
-            placeholder="Password (min 6 chars)"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label className="field">
-          <input
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <div className="actions">
-          <button className="btn" type="submit">
-            Sign Up
-          </button>
+    <div className="container mt-5 pt-5 d-flex justify-content-center align-item-center">
+      <div className="card" role="main" aria-label="Sign up for Frendora">
+        <div className="brand" aria-hidden="true">
+          <h1>Frendora</h1>
         </div>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
+        <form autoComplete="on" noValidate onSubmit={handleSubmit}>
+          <label className="field">
+            <input
+              name="name"
+              type="text"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
-        <p className="helper">
-          Already have an account? <Link to="/login">Log in</Link>
-        </p>
-      </form>
-    </main>
+          <label className="field">
+            <input
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label className="field">
+            <input
+              name="password"
+              type="password"
+              placeholder="Password (min 6 chars)"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label className="field">
+            <input
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <div className="actions">
+            <button className="btn" type="submit">
+              Sign Up
+            </button>
+          </div>
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {success && <p style={{ color: "green" }}>{success}</p>}
+
+          <p className="helper">
+            Already have an account? <Link to="/login">Log in</Link>
+          </p>
+        </form>
+      </div>
+    </div>
   );
 };
 

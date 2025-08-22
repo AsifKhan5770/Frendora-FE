@@ -46,7 +46,7 @@ let EditPost = () => {
 
       if (res.ok) {
         alert("✅ post updated successfully!");
-        navigate("/"); // redirect back to list
+        navigate("/posts"); // redirect back to list
       } else {
         alert("❌ Failed to update post");
       }

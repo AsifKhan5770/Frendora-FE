@@ -60,6 +60,7 @@ let ListPosts = () => {
   return (
     <>
       <div className="container-fluid mt-5 pt-4">
+        <h1 className="text-light text-center">Admin Dashboard</h1>
         {/* Top section: Search + Button */}
         <div className="row mb-3">
           <div className="col-12 col-md-6 mb-2 mb-md-0">

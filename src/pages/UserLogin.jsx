@@ -34,59 +34,61 @@ let UserLogin = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       setSuccess("Login successful!");
-      setTimeout(() => navigate("/profile"), 1000); // redirect to profile page
+      setTimeout(() => navigate("/posts"), 500); // redirect to profile page
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <main className="card" role="main" aria-label="Login to Frendora">
-      <div className="brand" aria-hidden="true">
-        <h1>Frendora</h1>
-      </div>
-
-      <form autoComplete="on" noValidate onSubmit={handleSubmit}>
-        <label className="field">
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label className="field">
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <div className="actions">
-          <button className="btn" type="submit">
-            Log In
-          </button>
+    <div className="container mt-5 pt-5 d-flex justify-content-center align-item-center">
+      <div className="card" role="main" aria-label="Login to Frendora">
+        <div className="brand" aria-hidden="true">
+          <h1>Frendora</h1>
         </div>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
+        <form autoComplete="on" noValidate onSubmit={handleSubmit}>
+          <label className="field">
+            <input
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
-        <p className="links">
-          <Link to="#">Forgot password?</Link>
-        </p>
+          <label className="field">
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
-        <p className="helper">
-          Don’t have an account? <Link to="/signup">Sign up</Link>
-        </p>
-      </form>
-    </main>
+          <div className="actions">
+            <button className="btn" type="submit">
+              Log In
+            </button>
+          </div>
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {success && <p style={{ color: "green" }}>{success}</p>}
+
+          <p className="links">
+            <Link to="#">Forgot password?</Link>
+          </p>
+
+          <p className="helper">
+            Don’t have an account? <Link to="/signup">Sign up</Link>
+          </p>
+        </form>
+      </div>
+    </div>
   );
 };
 

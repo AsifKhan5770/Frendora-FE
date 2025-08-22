@@ -33,7 +33,7 @@ let CreatePost = () => {
       if (res.ok) {
         alert("✅ Post added successfully!");
         setFormData({ title: "", description: "", author: "" }); // reset form
-        navigate("/"); // redirect to home page
+        navigate("/posts"); // redirect to home page
       } else {
         alert(`❌ Failed to add post: ${result.message || "Unknown error"}`);
       }

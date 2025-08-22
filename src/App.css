@@ -221,7 +221,7 @@ body{
 
 .field{position:relative;margin:14px 0}
 .field input{
-  width:100%;
+  width:150%;
   padding:14px 14px 14px 44px;
   border:1px solid #e5e7eb;
   border-radius:12px;
