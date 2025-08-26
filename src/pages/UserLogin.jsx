@@ -1,90 +1,76 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-let UserLogin = () => {
-  let navigate = useNavigate();
+const UserLogin = () => {
+  const navigate = useNavigate();
 
-  let [formData, setFormData] = useState({ email: "", password: "" });
-  let [error, setError] = useState("");
-  let [success, setSuccess] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  let handleChange = (e) => {
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  let handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
     try {
-      let res = await fetch("http://localhost:3001/api/users/login", {
+      const res = await fetch("http://localhost:3001/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      let data = await res.json();
+      const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
 
-      // ✅ Save logged in user only
+      // ✅ Save token and user info
+      localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       setSuccess("Login successful!");
-      setTimeout(() => navigate("/posts"), 500); // redirect to profile page
+      setTimeout(() => navigate("/posts"), 1000); // redirect to posts page
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <div className="container mt-5 pt-5 d-flex justify-content-center align-item-center">
-      <div className="card" role="main" aria-label="Login to Frendora">
-        <div className="brand" aria-hidden="true">
-          <h1>Frendora</h1>
-        </div>
-
-        <form autoComplete="on" noValidate onSubmit={handleSubmit}>
-          <label className="field">
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </label>
-
-          <label className="field">
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </label>
-
-          <div className="actions">
-            <button className="btn" type="submit">
-              Log In
-            </button>
-          </div>
-
+    <div className="container mt-5 pt-5 d-flex justify-content-center align-items-center">
+      <div className="card" style={{ width: "400px", padding: "20px" }}>
+        <h2 className="text-center mb-4">Login to Frendora</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            name="email"
+            type="email"
+            className="form-control mb-3"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="password"
+            type="password"
+            className="form-control mb-3"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <button className="btn btn-primary w-100" type="submit">
+            Log In
+          </button>
           {error && <p style={{ color: "red" }}>{error}</p>}
           {success && <p style={{ color: "green" }}>{success}</p>}
-
-          <p className="links">
-            <Link to="#">Forgot password?</Link>
-          </p>
-
-          <p className="helper">
-            Don’t have an account? <Link to="/signup">Sign up</Link>
+          <p className="mt-3 text-center">
+            Don't have an account? <Link to="/signup">Sign up</Link>
           </p>
         </form>
       </div>
