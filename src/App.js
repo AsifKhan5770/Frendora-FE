@@ -3,10 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import ErrorPage from './pages/ErrorPage';
-import Listposts from './pages/ListPosts';
-import Detailposts from './pages/DetailPost';
-import Createposts from './pages/CreatePost';
-import Editposts from './pages/EditPost';
+import ListPosts from './pages/Listposts';
+import DetailPost from './pages/Detailpost';
+import CreatePost from './pages/Createpost';
+import EditPost from './pages/Editpost';
 import UserLogin from './pages/UserLogin';
 import UserSignup from './pages/UserSignup';
 import UserProfile from './pages/UserProfile';
@@ -19,9 +19,9 @@ function App() {
     <>
       <Navbar />
       <Routes>
-        {/* Open Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/detail/:id" element={<Detailposts />} />
+        {/* Protected Routes */}
+        <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/detail/:id" element={<ProtectedRoute><DetailPost /></ProtectedRoute>} />
         <Route path="*" element={<ErrorPage />} />
 
         {/* Public Routes */}
@@ -29,9 +29,9 @@ function App() {
         <Route path="/signup" element={<PublicRoute><UserSignup /></PublicRoute>} />
 
         {/* Protected Routes */}
-        <Route path="/posts" element={<ProtectedRoute><Listposts /></ProtectedRoute>} />
-        <Route path="/create" element={<ProtectedRoute><Createposts /></ProtectedRoute>} />
-        <Route path="/edit/:id" element={<ProtectedRoute><Editposts /></ProtectedRoute>} />
+        <Route path="/posts" element={<ProtectedRoute><ListPosts /></ProtectedRoute>} />
+        <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
+        <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
       </Routes>
     </>

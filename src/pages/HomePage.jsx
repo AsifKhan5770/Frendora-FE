@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { authenticatedFetch } from '../utils/api';
+import MediaCarousel from '../components/MediaCarousel';
 
 let HomePage = () => {
   const [data, setData] = useState([]);
@@ -11,7 +13,7 @@ let HomePage = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/posts");
+      const res = await authenticatedFetch("http://localhost:3001/api/posts");
       const posts = await res.json();
       setData(posts);
     } catch (err) {
@@ -29,7 +31,7 @@ let HomePage = () => {
     }
 
     try {
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `http://localhost:3001/api/posts/search?query=${query}`
       );
       const posts = await res.json();
@@ -59,22 +61,27 @@ let HomePage = () => {
         <div className="row g-3">
           {[...data].reverse().map((i) => (
             <div className="col-12 col-md-6 col-lg-3" key={i._id}>
-              <div className="card h-100">
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">
-                    <Link
-                      className="page-link text-pink"
-                      to={`/detail/${i._id}`}
-                    >
-                      {i.title}
-                    </Link>
-                  </h5>
-                  <h6 className="card-subtitle mb-2 text-body-secondary text-bold">
-                    By <strong>{i.author}</strong>
-                  </h6>
-                  <p className="card-text flex-grow-1">{i.description}</p>
+                              <div className="card h-100">
+                  {i.media && i.media.length > 0 && (
+                    <div className="card-img-top position-relative" style={{ height: '200px', overflow: 'hidden' }}>
+                      <MediaCarousel media={i.media} postId={i._id} />
+                    </div>
+                  )}
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="card-title">
+                      <Link
+                        className="page-link text-pink"
+                        to={`/detail/${i._id}`}
+                      >
+                        {i.title}
+                      </Link>
+                    </h5>
+                    <h6 className="card-subtitle mb-2 text-body-secondary text-bold">
+                      By <strong>{i.author}</strong>
+                    </h6>
+                    <p className="card-text flex-grow-1">{i.description}</p>
+                  </div>
                 </div>
-              </div>
             </div>
           ))}
         </div>

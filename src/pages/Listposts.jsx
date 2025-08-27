@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { authenticatedFetch } from '../utils/api';
+import MediaCarousel from '../components/MediaCarousel';
 
 let ListPosts = () => {
   const [data, setData] = useState([]);
@@ -11,7 +13,7 @@ let ListPosts = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/posts");
+      const res = await authenticatedFetch("http://localhost:3001/api/posts");
       const posts = await res.json();
       setData(posts);
     } catch (err) {
@@ -29,7 +31,7 @@ let ListPosts = () => {
     }
 
     try {
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `http://localhost:3001/api/posts/search?query=${query}`
       );
       const posts = await res.json();
@@ -43,7 +45,7 @@ let ListPosts = () => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/api/posts/${id}`, {
+      const res = await authenticatedFetch(`http://localhost:3001/api/posts/${id}`, {
         method: "DELETE",
       });
 
@@ -84,6 +86,11 @@ let ListPosts = () => {
           {[...data].reverse().map((i) => (
             <div className="col-12 col-md-6 col-lg-3" key={i._id}>
               <div className="card h-100">
+                {i.media && i.media.length > 0 && (
+                  <div className="card-img-top position-relative" style={{ height: '200px', overflow: 'hidden' }}>
+                    <MediaCarousel media={i.media} postId={i._id} />
+                  </div>
+                )}
                 <div className="card-body d-flex flex-column">
                   <h5 className="card-title">
                     <Link

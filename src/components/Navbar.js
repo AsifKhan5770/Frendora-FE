@@ -1,23 +1,22 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { logout } from '../utils/api';
 
 let Navbar = () => {
- const navigate = useNavigate();
 
   // Safely parse user from localStorage
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/");
+    logout();
   };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-glass fixed-top">
       <div className="container-fluid">
         {/* Brand */}
-        <Link className="navbar-brand fw-bold text-pink" to="/">
-          Frendora
+        <Link className="navbar-brand gradient-text" to="/">
+          ✨ Frendora
         </Link>
         {/* Toggle button (mobile) */}
         <button

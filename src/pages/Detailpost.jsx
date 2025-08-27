@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { authenticatedFetch } from '../utils/api';
+import MediaCarousel from '../components/MediaCarousel';
 
 let DetailPost = () => {
   const [data, setData] = useState(null);
@@ -9,7 +11,7 @@ let DetailPost = () => {
     if (!id) return;
     const fetchData = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/posts/${id}`);
+        const res = await authenticatedFetch(`http://localhost:3001/api/posts/${id}`);
         const post = await res.json();
         setData(post);
       } catch (error) {
@@ -30,6 +32,11 @@ let DetailPost = () => {
     >
       {data ? (
         <div className="card shadow-lg w-100" style={{ maxWidth: "900px" }}>
+          {data.media && data.media.length > 0 && (
+            <div className="card-img-top">
+              <MediaCarousel media={data.media} isDetail={true} />
+            </div>
+          )}
           <div className="card-body">
             <h1 className="card-title text-pink mb-3">{data.title}</h1>
             <h6 className="card-subtitle mb-3 text-muted">
