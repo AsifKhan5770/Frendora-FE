@@ -19,14 +19,12 @@ function App() {
     <>
       <Navbar />
       <Routes>
-        {/* Protected Routes */}
-        <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-        <Route path="/detail/:id" element={<ProtectedRoute><DetailPost /></ProtectedRoute>} />
-        <Route path="*" element={<ErrorPage />} />
-
-        {/* Public Routes */}
+        {/* Public Routes - No authentication required */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/detail/:id" element={<DetailPost />} />
         <Route path="/login" element={<PublicRoute><UserLogin /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><UserSignup /></PublicRoute>} />
+        <Route path="*" element={<ErrorPage />} />
 
         {/* Protected Routes */}
         <Route path="/posts" element={<ProtectedRoute><ListPosts /></ProtectedRoute>} />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { authenticatedFetch } from '../utils/api';
+import { apiFetch } from '../utils/api';
 import MediaCarousel from '../components/MediaCarousel';
 
 let DetailPost = () => {
@@ -11,7 +11,7 @@ let DetailPost = () => {
     if (!id) return;
     const fetchData = async () => {
       try {
-        const res = await authenticatedFetch(`posts/${id}`);
+        const res = await apiFetch(`posts/${id}`);
         const post = await res.json();
         setData(post);
       } catch (error) {

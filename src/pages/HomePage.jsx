@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { authenticatedFetch } from '../utils/api';
+import { apiFetch } from '../utils/api';
 import MediaCarousel from '../components/MediaCarousel';
 
 let HomePage = () => {
@@ -13,7 +13,7 @@ let HomePage = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await authenticatedFetch("posts");
+      const res = await apiFetch("posts");
       const posts = await res.json();
       setData(posts);
     } catch (err) {
@@ -30,14 +30,14 @@ let HomePage = () => {
       return;
     }
 
-    try {
-              const res = await authenticatedFetch(
+          try {
+        const res = await apiFetch(
           `posts/search?query=${query}`
         );
-      const posts = await res.json();
-      setData(posts);
-    } catch (err) {
-      console.error("Error searching posts:", err);
+        const posts = await res.json();
+        setData(posts);
+      } catch (err) {
+        console.error("Error searching posts:", err);
     }
   };
 
