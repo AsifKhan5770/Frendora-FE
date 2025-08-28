@@ -237,10 +237,10 @@ let Profile = () => {
         `}
       </style>
       <div className="row justify-content-center w-100" style={{maxWidth: 720}}>
-        <div className="col-12">
+        <div className="col-12 d-flex justify-content-center align-items-center">
           <div className="card shadow-lg p-4">
                          <div className="position-relative mb-4">
-               <h2 className="mb-0 text-center">👤 My Profile</h2>
+               <h2 className="mb-0 text-center">My Profile</h2>
                <div 
                  className="position-absolute top-0 end-0"
                  style={{ cursor: 'pointer' }}
@@ -253,21 +253,20 @@ let Profile = () => {
 
             {/* Profile Info */}
             <div className="mb-4">
-              <div className="mb-3 d-flex justify-content-center align-items-center">
-                 <div
-                   onClick={isEditing ? openFilePicker : undefined}
-                   style={{ 
-                     width: 150, 
-                     height: 150, 
-                     borderRadius: '50%', 
-                     marginRight: 16, 
-                     position: 'relative', 
-                     cursor: isEditing ? 'pointer' : 'default',
-                     border: isEditing ? '3px solid #0d6efd' : '3px solid #e9ecef',
-                     transition: 'all 0.2s ease'
-                   }}
-                   className={isEditing ? 'avatar-hover' : ''}
-                 >
+                             <div className="mb-3 d-flex justify-content-center align-items-center">
+                  <div
+                    onClick={isEditing ? openFilePicker : undefined}
+                    style={{ 
+                      width: 150, 
+                      height: 150, 
+                      borderRadius: '50%', 
+                      position: 'relative', 
+                      cursor: isEditing ? 'pointer' : 'default',
+                      border: isEditing ? '3px solid #0d6efd' : '3px solid #e9ecef',
+                      transition: 'all 0.2s ease'
+                    }}
+                    className={isEditing ? 'avatar-hover' : ''}
+                  >
                    {avatarToShow && avatarToShow !== '/placeholder.png' ? (
                      <img
                        src={avatarToShow}
@@ -361,21 +360,19 @@ let Profile = () => {
                        ✕
                      </div>
                    )}
-                 </div>
-                 
-                 <div className="flex-grow-1">
-                   {isEditing && (
-                     <input
-                       ref={fileInputRef}
-                       type="file"
-                       accept="image/*"
-                       style={{ display: 'none' }}
-                       onChange={handleFileSelect}
-                     />
-                   )}
-                   
-                 </div>
-               </div>
+                                   </div>
+                  
+                  {/* Hidden file input */}
+                  {isEditing && (
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleFileSelect}
+                    />
+                  )}
+                </div>
               
               <div className="row g-3">
                 <div className="col-md-6">
