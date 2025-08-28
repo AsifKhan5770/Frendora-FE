@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from '../utils/api';
 
 const UserLogin = () => {
   const navigate = useNavigate();
@@ -18,9 +19,8 @@ const UserLogin = () => {
     setSuccess("");
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/users/login`, {
+      const res = await apiFetch("users/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 

@@ -62,38 +62,20 @@ let ListPosts = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className="container-fluid py-5 mt-5">
+      <div className="container-fluid mt-5 pt-5">
         <div className="container">
           <div className="row justify-content-center text-center">
-            <div className="col-lg-8">
-              <h1 className="display-4 fw-bold mb-4" style={{ color: 'white' }}>
-                🛠️ Admin Dashboard
-              </h1>
-              <p className="lead mb-4" style={{ color: 'white' }}>
-                Manage all posts, create new content, and oversee your Frendora platform.
-              </p>
-              <div className="d-flex justify-content-center">
-                <Link to="/create" className="btn btn-lg px-4 py-3 me-3 rounded-pill fw-semibold" style={{ backgroundColor: '#ff69b4', border: 'none', color: 'white' }}>
-                  📝 Create New Post
-                </Link>
-                <Link to="/profile" className="btn btn-lg px-4 py-3 rounded-pill fw-semibold" style={{ backgroundColor: '#ff69b4', border: 'none', color: 'white' }}>
-                  👤 My Profile
-                </Link>
-              </div>
+            <div className="col-lg-8"> 
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container py-5">
+      <div className="container mb-5">
         {/* Search Section */}
         <div className="row justify-content-center mb-5">
           <div className="col-lg-8 col-md-10">
-            <div className="text-center mb-4">
-              <h2 className="h3 fw-bold mb-3" style={{ color: 'white' }}>🔍 Search Posts</h2>
-              <p style={{ color: 'white' }}>Find and manage posts</p>
-            </div>
             <div className="position-relative">
               <input
                 type="text"
@@ -173,7 +155,7 @@ let ListPosts = () => {
                           className="btn rounded-pill px-4 py-2 fw-semibold"
                           style={{ backgroundColor: '#0095f6', border: 'none', color: 'white' }}
                         >
-                          View Post →
+                          Read More →
                         </Link>
                         <div className="d-flex gap-2">
                           <Link 

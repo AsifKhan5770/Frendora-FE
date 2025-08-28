@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from '../utils/api';
 
 const UserSignup = () => {
   const navigate = useNavigate();
@@ -40,9 +41,8 @@ const UserSignup = () => {
     }
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/users/register`, {
+      const res = await apiFetch("users/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
