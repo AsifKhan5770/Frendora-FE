@@ -101,11 +101,6 @@ let EditPost = () => {
     e.preventDefault();
 
     try {
-      console.log('Submitting form with:');
-      console.log('- selectedFiles:', selectedFiles);
-      console.log('- existingMediaToKeep:', existingMediaToKeep);
-      console.log('- filePreviews:', filePreviews);
-      
       // Create FormData for file upload
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title);
@@ -113,21 +108,14 @@ let EditPost = () => {
       formDataToSend.append('author', formData.author);
       
       // Append all selected files
-      selectedFiles.forEach((file, index) => {
-        console.log(`Appending file ${index}:`, file.name, file.size, file.type);
+      selectedFiles.forEach(file => {
         formDataToSend.append('media', file);
       });
 
       // Append existing media that should be kept
-      existingMediaToKeep.forEach((media, index) => {
-        console.log(`Appending existing media ${index}:`, media.filename);
+      existingMediaToKeep.forEach(media => {
         formDataToSend.append('existingMedia', JSON.stringify(media));
       });
-
-      console.log('FormData entries:');
-      for (let [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
-      }
 
       let res = await fetch(`http://localhost:3001/api/posts/${id}`, {
         method: "PUT",
@@ -154,9 +142,12 @@ let EditPost = () => {
   return (
     <>
       <div className="container-fluid mt-5 pt-4">
-        <h2 className="text-center">Edit Post</h2>
-        {formData ? (
-          <form onSubmit={handleSubmit}>
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <h2 className="text-center mb-4">✏️ Edit Post</h2>
+            
+            {formData ? (
+              <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">Post Title</label>
               <input
@@ -235,12 +226,12 @@ let EditPost = () => {
                               controls
                             />
                           )}
-                          <div className="card-body p-2">
-                            <small className="text-muted">{preview.originalName}</small>
-                            {!preview.file && (
-                              <small className="text-muted d-block">(Existing file)</small>
-                            )}
-                          </div>
+                                                      <div className="card-body p-2">
+                              <small className="text-muted">{preview.originalName}</small>
+                              {!preview.file && (
+                                <small className="text-muted d-block">(Existing file)</small>
+                              )}
+                            </div>
                           <button
                             type="button"
                             className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
@@ -257,13 +248,17 @@ let EditPost = () => {
               )}
             </div>
 
-            <button type="submit" className="btn btn-pink">
-              Update post
-            </button>
-          </form>
-        ) : (
-          <p>Loading...</p>
-        )}
+                <div className="d-grid gap-2">
+                  <button type="submit" className="btn btn-success btn-lg">
+                    💾 Update Post
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <p>Loading...</p>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );
