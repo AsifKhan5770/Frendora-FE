@@ -44,7 +44,7 @@ let HomePage = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className="container-fluid mt-5">
+      <div className="container-fluid mt-5 pt-5">
         <div className="container">
           <div className="row justify-content-center text-center">
             <div className="col-lg-8">
@@ -54,7 +54,7 @@ let HomePage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container">
+      <div className="container mb-5">
         {/* Search Section */}
         <div className="row justify-content-center mb-5">
           <div className="col-lg-8 col-md-10">

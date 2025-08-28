@@ -1,5 +1,12 @@
 // API utility functions
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
+  (window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : 'https://frendora-be.vercel.app/api');
+
+// Debug logging for environment variables
+console.log('Environment Variables Debug:');
+console.log('REACT_APP_API_BASE_URL:', process.env.REACT_APP_API_BASE_URL);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('Final API_BASE_URL:', API_BASE_URL);
 
 // Authenticated fetch function
 export const authenticatedFetch = async (endpoint, options = {}) => {
@@ -57,7 +64,8 @@ export const apiFetch = async (endpoint, options = {}) => {
 
 // Utility function to get upload URL with fallback
 export const getUploadUrl = (filename) => {
-  const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
+  const baseUrl = process.env.REACT_APP_API_BASE_URL || 
+    (window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : 'https://frendora-be.vercel.app/api');
   return `${baseUrl.replace('/api', '')}/uploads/${filename}`;
 };
 
