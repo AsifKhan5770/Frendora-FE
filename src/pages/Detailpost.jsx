@@ -25,16 +25,15 @@ let DetailPost = () => {
     <div
       className="d-flex align-items-center justify-content-center"
       style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8f9fa",
-        padding: "2rem",
+        minHeight: "95vh",
+        
       }}
     >
       {data ? (
-        <div className="card shadow-lg w-100" style={{ maxWidth: "900px" }}>
+        <div className="card shadow-lg w-100 mt-5 pt-5" style={{ maxWidth: "1000px" }}>
           {data.media && data.media.length > 0 && (
-            <div className="card-img-top" style={{ height: '400px', overflow: 'hidden' }}>
-              <MediaCarousel media={data.media} isDetail={true} />
+            <div className="card-img-top" style={{ height: '250px', overflow: 'hidden' }}>
+              <MediaCarousel media={data.media} />
             </div>
           )}
           <div className="card-body">
@@ -44,7 +43,7 @@ let DetailPost = () => {
             </h6>
             <p className="card-text">{data.description}</p>
             <div className="mt-4">
-              <Link to="/" className="btn text-pink">
+              <Link to="/" className="btn">
                 ← Back to Posts
               </Link>
             </div>
