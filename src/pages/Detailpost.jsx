@@ -11,7 +11,7 @@ let DetailPost = () => {
     if (!id) return;
     const fetchData = async () => {
       try {
-        const res = await authenticatedFetch(`http://localhost:3001/api/posts/${id}`);
+        const res = await authenticatedFetch(`posts/${id}`);
         const post = await res.json();
         setData(post);
       } catch (error) {

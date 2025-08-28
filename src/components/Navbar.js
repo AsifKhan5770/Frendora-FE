@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { logout } from '../utils/api';
+import { logout, getUploadUrl } from '../utils/api';
 
 let Navbar = () => {
   const [user, setUser] = useState(null);
@@ -29,7 +29,7 @@ let Navbar = () => {
   // Get avatar URL with fallback to placeholder
   const getAvatarUrl = () => {
     if (user?.avatarUrl) {
-      return `http://localhost:3001/uploads/${user.avatarUrl}`;
+      return getUploadUrl(user.avatarUrl);
     }
     return '/placeholder.png';
   };

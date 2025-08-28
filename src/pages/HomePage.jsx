@@ -13,7 +13,7 @@ let HomePage = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await authenticatedFetch("http://localhost:3001/api/posts");
+      const res = await authenticatedFetch("posts");
       const posts = await res.json();
       setData(posts);
     } catch (err) {
@@ -31,9 +31,9 @@ let HomePage = () => {
     }
 
     try {
-      const res = await authenticatedFetch(
-        `http://localhost:3001/api/posts/search?query=${query}`
-      );
+              const res = await authenticatedFetch(
+          `posts/search?query=${query}`
+        );
       const posts = await res.json();
       setData(posts);
     } catch (err) {

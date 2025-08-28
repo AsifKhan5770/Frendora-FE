@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { authenticatedFetch } from '../utils/api';
+import { authenticatedFetch, getUploadUrl } from '../utils/api';
 
 let EditPost = () => {
   let [formData, setFormData] = useState({
@@ -20,13 +20,13 @@ let EditPost = () => {
     if (!id) return;
     let fetchData = async () => {
       try {
-        let res = await authenticatedFetch(`http://localhost:3001/api/posts/${id}`);
+        let res = await authenticatedFetch(`posts/${id}`);
         let post = await res.json();
         setFormData(post);
         if (post.media && post.media.length > 0) {
           const existingPreviews = post.media.map(media => ({
             file: null,
-            preview: `http://localhost:3001/uploads/${media.filename}`,
+            preview: getUploadUrl(media.filename),
             type: media.mimetype.startsWith('image/') ? 'image' : 'video',
             originalName: media.originalName,
             filename: media.filename, // Store filename to identify existing media
@@ -117,7 +117,7 @@ let EditPost = () => {
         formDataToSend.append('existingMedia', JSON.stringify(media));
       });
 
-      let res = await fetch(`http://localhost:3001/api/posts/${id}`, {
+      let res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/posts/${id}`, {
         method: "PUT",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

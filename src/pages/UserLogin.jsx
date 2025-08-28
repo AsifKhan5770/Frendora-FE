@@ -18,7 +18,7 @@ const UserLogin = () => {
     setSuccess("");
 
     try {
-      const res = await fetch("http://localhost:3001/api/users/login", {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

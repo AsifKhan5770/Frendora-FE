@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { authenticatedFetch } from "../utils/api";
+import { authenticatedFetch, getUploadUrl } from "../utils/api";
 
 let Profile = () => {
   let [user, setUser] = useState(null);
@@ -23,7 +23,7 @@ let Profile = () => {
     let fetchProfile = async () => {
       try {
         let res = await authenticatedFetch(
-          `http://localhost:3001/api/users/profile/${userId}`
+          `users/profile/${userId}`
         );
         if (res.ok) {
           let data = await res.json();
@@ -109,7 +109,7 @@ let Profile = () => {
       // Update name if changed
       if (editData.name !== user.name) {
         let res = await authenticatedFetch(
-          `http://localhost:3001/api/users/profile/${userId}/name`,
+          `users/profile/${userId}/name`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -125,7 +125,7 @@ let Profile = () => {
       // Update password if provided
       if (editData.oldPassword && editData.newPassword) {
         let res = await authenticatedFetch(
-          `http://localhost:3001/api/users/profile/${userId}/password`,
+          `users/profile/${userId}/password`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -146,7 +146,7 @@ let Profile = () => {
         const formData = new FormData();
         formData.append("avatar", selectedFile);
         let res = await authenticatedFetch(
-          `http://localhost:3001/api/users/profile/${userId}/avatar`,
+          `users/profile/${userId}/avatar`,
           {
             method: "POST",
             body: formData,
@@ -160,9 +160,9 @@ let Profile = () => {
       }
 
       // Refresh profile data
-      let res = await authenticatedFetch(
-        `http://localhost:3001/api/users/profile/${userId}`
-      );
+              let res = await authenticatedFetch(
+          `users/profile/${userId}`
+        );
       if (res.ok) {
         let data = await res.json();
         setUser(data);
@@ -197,7 +197,7 @@ let Profile = () => {
   const handleAvatarDelete = async () => {
     try {
       let res = await authenticatedFetch(
-        `http://localhost:3001/api/users/profile/${userId}/avatar`,
+        `users/profile/${userId}/avatar`,
         { method: "DELETE" }
       );
       let data = await res.json();
@@ -221,7 +221,7 @@ let Profile = () => {
   if (!user) return <h2 className="text-center mt-5">Loading profile...</h2>;
 
   // Determine what to show for avatar
-  const avatarToShow = avatarPreview || (user.avatarUrl ? `http://localhost:3001/uploads/${user.avatarUrl}` : '/placeholder.png');
+  const avatarToShow = avatarPreview || (user.avatarUrl ? getUploadUrl(user.avatarUrl) : '/placeholder.png');
 
   return (
     <div className="container mt-5 pt-5 d-flex justify-content-center align-item-center">

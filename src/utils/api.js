@@ -1,35 +1,64 @@
-// Utility function for making authenticated API calls
-export const authenticatedFetch = async (url, options = {}) => {
+// API utility functions
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
+
+// Authenticated fetch function
+export const authenticatedFetch = async (endpoint, options = {}) => {
   const token = localStorage.getItem('token');
+  
   if (!token) {
     throw new Error('No authentication token found');
   }
 
-  const isFormData = options && options.body instanceof FormData;
-
-  const headers = {
-    'Authorization': `Bearer ${token}`,
-    ...options.headers
+  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  
+  const defaultOptions = {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   };
-  // Only set JSON Content-Type if not sending FormData and not already provided
-  if (!isFormData && !('Content-Type' in headers)) {
-    headers['Content-Type'] = 'application/json';
-  }
 
-  const response = await fetch(url, {
+  // Merge options, but let options.headers override default headers
+  const finalOptions = {
+    ...defaultOptions,
     ...options,
-    headers
-  });
+    headers: {
+      ...defaultOptions.headers,
+      ...options.headers,
+    },
+  };
 
-  // If token is invalid/expired, clear it and redirect to login
-  if (response.status === 401) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
-    throw new Error('Authentication failed. Please login again.');
-  }
+  return fetch(url, finalOptions);
+};
 
-  return response;
+// Regular fetch function (for non-authenticated requests)
+export const apiFetch = async (endpoint, options = {}) => {
+  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+
+  const defaultOptions = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  };
+
+  const finalOptions = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...options.headers,
+    },
+  };
+
+  return fetch(url, finalOptions);
+};
+
+// Utility function to get upload URL with fallback
+export const getUploadUrl = (filename) => {
+  const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
+  return `${baseUrl.replace('/api', '')}/uploads/${filename}`;
 };
 
 // Check if user is authenticated

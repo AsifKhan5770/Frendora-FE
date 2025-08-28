@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { getUploadUrl } from '../utils/api';
 
 const MediaCarousel = ({ media, postId, isDetail = false }) => {
   const carouselRef = useRef(null);
@@ -45,27 +46,27 @@ const MediaCarousel = ({ media, postId, isDetail = false }) => {
         {media.map((item, index) => (
           <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''} ${isDetail ? '' : 'h-100'}`}>
             {item.mimetype.startsWith('image/') ? (
-              <img 
-                src={`http://localhost:3001/uploads/${item.filename}`} 
-                alt={item.originalName}
-                className={`d-block w-100 ${isDetail ? '' : 'h-100'}`}
-                style={{ 
-                  objectFit: 'contain',
-                  backgroundColor: '#f8f9fa'
-                }}
-              />
+                             <img 
+                 src={getUploadUrl(item.filename)} 
+                 alt={item.originalName}
+                 className={`d-block w-100 ${isDetail ? '' : 'h-100'}`}
+                 style={{ 
+                   objectFit: 'contain',
+                   backgroundColor: '#f8f9fa'
+                 }}
+               />
             ) : (
-              <video 
-                src={`http://localhost:3001/uploads/${item.filename}`} 
-                className={`d-block w-100 ${isDetail ? '' : 'h-100'}`}
-                style={{ 
-                  objectFit: 'contain',
-                  backgroundColor: '#f8f9fa'
-                }}
-                muted={!isDetail}
-                loop={!isDetail}
-                controls={isDetail}
-              />
+                             <video 
+                 src={getUploadUrl(item.filename)} 
+                 className={`d-block w-100 ${isDetail ? '' : 'h-100'}`}
+                 style={{ 
+                   objectFit: 'contain',
+                   backgroundColor: '#f8f9fa'
+                 }}
+                 muted={!isDetail}
+                 loop={!isDetail}
+                 controls={isDetail}
+               />
             )}
             
             {isDetail && (

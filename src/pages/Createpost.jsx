@@ -69,7 +69,7 @@ let CreatePost = () => {
         formDataToSend.append('media', file);
       });
 
-      const res = await fetch("http://localhost:3001/api/posts", {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/posts`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
