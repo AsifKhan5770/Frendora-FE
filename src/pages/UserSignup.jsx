@@ -60,6 +60,10 @@ const UserSignup = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      // Notify navbar to refresh avatar
+      window.dispatchEvent(new CustomEvent('profileUpdated', { detail: data.user }));
+      window.dispatchEvent(new CustomEvent('login'));
+
       setSuccess("Account created successfully! Redirecting...");
       
       // ✅ Redirect to home page

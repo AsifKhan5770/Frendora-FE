@@ -34,6 +34,10 @@ const UserLogin = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      // Notify navbar to refresh avatar
+      window.dispatchEvent(new CustomEvent('profileUpdated', { detail: data.user }));
+      window.dispatchEvent(new CustomEvent('login'));
+
       setSuccess("Login successful!");
       setTimeout(() => navigate("/"), 1000); // redirect to home page
     } catch (err) {
