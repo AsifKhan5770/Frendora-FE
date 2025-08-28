@@ -7,7 +7,6 @@ let Profile = () => {
   let [oldPassword, setOldPassword] = useState("");
   let [newPassword, setNewPassword] = useState("");
   let [message, setMessage] = useState("");
-  let [avatarFile, setAvatarFile] = useState(null);
   let [avatarPreview, setAvatarPreview] = useState("");
   const fileInputRef = useRef(null);
   const openFilePicker = () => fileInputRef.current && fileInputRef.current.click();
@@ -25,13 +24,12 @@ let Profile = () => {
       }
     );
     const data = await res.json();
-    setMessage(data.message || (res.ok ? "Avatar updated" : "Error uploading avatar"));
-    if (res.ok) {
-      setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setAvatarFile(null);
-      setAvatarPreview("");
-    }
+           setMessage(data.message || (res.ok ? "Avatar updated" : "Error uploading avatar"));
+       if (res.ok) {
+         setUser(data.user);
+         localStorage.setItem("user", JSON.stringify(data.user));
+         setAvatarPreview("");
+       }
   };
 
   let stored = JSON.parse(localStorage.getItem("user"));
@@ -90,34 +88,6 @@ let Profile = () => {
     }
   };
 
-  // Upload/Change avatar
-  let handleAvatarUpload = async (e) => {
-    e.preventDefault();
-    if (!avatarFile) {
-      setMessage("Please select an image first");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("avatar", avatarFile);
-
-    let res = await authenticatedFetch(
-      `http://localhost:3001/api/users/profile/${userId}/avatar`,
-      {
-        method: "POST",
-        body: formData,
-        headers: {},
-      }
-    );
-    let data = await res.json();
-    setMessage(data.message || "Error uploading avatar");
-    if (res.ok) {
-      setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setAvatarFile(null);
-      setAvatarPreview("");
-    }
-  };
-
   // Delete avatar
   let handleAvatarDelete = async () => {
     let res = await authenticatedFetch(
@@ -152,7 +122,7 @@ let Profile = () => {
                     style={{ width: 80, height: 80, borderRadius: '50%', marginRight: 16, position: 'relative', cursor: 'pointer' }}
                   >
                     <img
-                      src={avatarPreview || user.avatarUrl}
+                      src={avatarPreview || `http://localhost:3001/uploads/${user.avatarUrl}`}
                       alt="avatar"
                       style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                     />
@@ -188,28 +158,27 @@ let Profile = () => {
                     type="file"
                     accept="image/*"
                     style={{ display: 'none' }}
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0] || null;
-                      if (!file) { setAvatarFile(null); setAvatarPreview(""); return; }
-                      const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-                      const maxSizeBytes = 5 * 1024 * 1024; // 5MB
-                      if (!validTypes.includes(file.type)) {
-                        setMessage("Only JPG, PNG, WEBP, GIF images are allowed");
-                        e.target.value = "";
-                        return;
-                      }
-                      if (file.size > maxSizeBytes) {
-                        setMessage("Image is too large. Max 5MB");
-                        e.target.value = "";
-                        return;
-                      }
-                      setMessage("");
-                      setAvatarFile(file);
-                      const reader = new FileReader();
-                      reader.onload = () => setAvatarPreview(reader.result);
-                      reader.readAsDataURL(file);
-                      await uploadSelectedFile(file);
-                    }}
+                                         onChange={async (e) => {
+                       const file = e.target.files?.[0] || null;
+                       if (!file) { setAvatarPreview(""); return; }
+                       const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+                       const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+                       if (!validTypes.includes(file.type)) {
+                         setMessage("Only JPG, PNG, WEBP, GIF images are allowed");
+                         e.target.value = "";
+                         return;
+                       }
+                       if (file.size > maxSizeBytes) {
+                         setMessage("Image is too large. Max 5MB");
+                         e.target.value = "";
+                         return;
+                       }
+                       setMessage("");
+                       const reader = new FileReader();
+                       reader.onload = () => setAvatarPreview(reader.result);
+                       reader.readAsDataURL(file);
+                       await uploadSelectedFile(file);
+                     }}
                   />
                   {user.avatarUrl && (
                     <div className="mt-2">
