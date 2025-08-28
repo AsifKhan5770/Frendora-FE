@@ -3,34 +3,17 @@ import { authenticatedFetch } from "../utils/api";
 
 let Profile = () => {
   let [user, setUser] = useState(null);
-  let [newName, setNewName] = useState("");
-  let [oldPassword, setOldPassword] = useState("");
-  let [newPassword, setNewPassword] = useState("");
+  let [isEditing, setIsEditing] = useState(false);
+  let [editData, setEditData] = useState({
+    name: "",
+    oldPassword: "",
+    newPassword: ""
+  });
   let [message, setMessage] = useState("");
   let [avatarPreview, setAvatarPreview] = useState("");
+  let [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
   const openFilePicker = () => fileInputRef.current && fileInputRef.current.click();
-
-  // Auto-upload helper when a file is chosen
-  const uploadSelectedFile = async (file) => {
-    const formData = new FormData();
-    formData.append("avatar", file);
-    const res = await authenticatedFetch(
-      `http://localhost:3001/api/users/profile/${userId}/avatar`,
-      {
-        method: "POST",
-        body: formData,
-        headers: {},
-      }
-    );
-    const data = await res.json();
-           setMessage(data.message || (res.ok ? "Avatar updated" : "Error uploading avatar"));
-       if (res.ok) {
-         setUser(data.user);
-         localStorage.setItem("user", JSON.stringify(data.user));
-         setAvatarPreview("");
-       }
-  };
 
   let stored = JSON.parse(localStorage.getItem("user"));
   let userId = stored?.id || stored?._id;
@@ -38,162 +21,375 @@ let Profile = () => {
   // Fetch profile
   useEffect(() => {
     let fetchProfile = async () => {
-      let res = await authenticatedFetch(
-        `http://localhost:3001/api/users/profile/${userId}`
-      );
-      let data = await res.json();
-      setUser(data);
-      setNewName(data.name);
+      try {
+        let res = await authenticatedFetch(
+          `http://localhost:3001/api/users/profile/${userId}`
+        );
+        if (res.ok) {
+          let data = await res.json();
+          setUser(data);
+          setEditData({
+            name: data.name,
+            oldPassword: "",
+            newPassword: ""
+          });
+        } else {
+          setMessage("Failed to fetch profile");
+        }
+      } catch (error) {
+        setMessage("Error fetching profile");
+      }
     };
     if (userId) fetchProfile();
   }, [userId]);
 
-  // Update name
-  let handleNameChange = async (e) => {
-    e.preventDefault();
-    let res = await authenticatedFetch(
-      `http://localhost:3001/api/users/profile/${userId}/name`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName }),
-      }
-    );
-    let data = await res.json();
-    setMessage(data.message || "Error updating name");
-    
-    if (res.ok) {
-      setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
+  // Handle edit mode toggle
+  const toggleEditMode = () => {
+    if (isEditing) {
+      // Cancel editing - reset to original values
+      setEditData({
+        name: user.name,
+        oldPassword: "",
+        newPassword: ""
+      });
+      setAvatarPreview("");
+      setSelectedFile(null);
     }
+    setIsEditing(!isEditing);
   };
 
-  // Change password
-  let handlePasswordChange = async (e) => {
-    e.preventDefault();
-    let res = await authenticatedFetch(
-      `http://localhost:3001/api/users/profile/${userId}/password`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ oldPassword, newPassword }),
-      }
-    );
-    let data = await res.json();
-    setMessage(data.message || "Error changing password");
+  // Handle file selection
+  const handleFileSelect = (e) => {
+    console.log("File selection triggered", e.target.files);
+    const file = e.target.files?.[0] || null;
+    if (!file) {
+      console.log("No file selected");
+      setSelectedFile(null);
+      setAvatarPreview("");
+      return;
+    }
 
-    if (res.ok) {
-      setOldPassword("");
-      setNewPassword("");
+    console.log("File selected:", file.name, file.type, file.size);
+
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+
+    if (!validTypes.includes(file.type)) {
+      setMessage("Only JPG, PNG, WEBP, GIF images are allowed");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > maxSizeBytes) {
+      setMessage("Image is too large. Max 5MB");
+      e.target.value = "";
+      return;
+    }
+
+    setMessage("");
+    setSelectedFile(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      console.log("FileReader onload triggered, result length:", reader.result.length);
+      setAvatarPreview(reader.result);
+    };
+    reader.onerror = (error) => {
+      console.error("FileReader error:", error);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Save all changes
+  const handleSave = async () => {
+    try {
+      setMessage("Saving changes...");
+      
+      // Update name if changed
+      if (editData.name !== user.name) {
+        let res = await authenticatedFetch(
+          `http://localhost:3001/api/users/profile/${userId}/name`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: editData.name }),
+          }
+        );
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.message || "Failed to update name");
+        }
+      }
+
+      // Update password if provided
+      if (editData.oldPassword && editData.newPassword) {
+        let res = await authenticatedFetch(
+          `http://localhost:3001/api/users/profile/${userId}/password`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              oldPassword: editData.oldPassword, 
+              newPassword: editData.newPassword 
+            }),
+          }
+        );
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.message || "Failed to update password");
+        }
+      }
+
+      // Upload avatar if selected
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append("avatar", selectedFile);
+        let res = await authenticatedFetch(
+          `http://localhost:3001/api/users/profile/${userId}/avatar`,
+          {
+            method: "POST",
+            body: formData,
+            headers: {},
+          }
+        );
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.message || "Failed to upload avatar");
+        }
+      }
+
+      // Refresh profile data
+      let res = await authenticatedFetch(
+        `http://localhost:3001/api/users/profile/${userId}`
+      );
+      if (res.ok) {
+        let data = await res.json();
+        setUser(data);
+        localStorage.setItem("user", JSON.stringify(data));
+        
+        // Notify navbar to refresh (for avatar updates)
+        window.dispatchEvent(new CustomEvent('profileUpdated', { detail: data }));
+        
+        // Reset form and exit edit mode
+        setEditData({
+          name: data.name,
+          oldPassword: "",
+          newPassword: ""
+        });
+        setAvatarPreview("");
+        setSelectedFile(null);
+        setIsEditing(false);
+        setMessage("Profile updated successfully!");
+        
+        // Clear message after 3 seconds
+        setTimeout(() => setMessage(""), 3000);
+      } else {
+        throw new Error("Failed to refresh profile");
+      }
+      
+    } catch (error) {
+      setMessage(error.message || "Error updating profile");
     }
   };
 
   // Delete avatar
-  let handleAvatarDelete = async () => {
-    let res = await authenticatedFetch(
-      `http://localhost:3001/api/users/profile/${userId}/avatar`,
-      { method: "DELETE" }
-    );
-    let data = await res.json();
-    setMessage(data.message || "Error deleting avatar");
-    if (res.ok) {
-      setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setAvatarPreview("");
+  const handleAvatarDelete = async () => {
+    try {
+      let res = await authenticatedFetch(
+        `http://localhost:3001/api/users/profile/${userId}/avatar`,
+        { method: "DELETE" }
+      );
+      let data = await res.json();
+      if (res.ok) {
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        
+        // Notify navbar to refresh (for avatar updates)
+        window.dispatchEvent(new CustomEvent('profileUpdated', { detail: data.user }));
+        
+        setMessage("Avatar deleted successfully!");
+        setTimeout(() => setMessage(""), 3000);
+      } else {
+        setMessage(data.message || "Error deleting avatar");
+      }
+    } catch (error) {
+      setMessage("Error deleting avatar");
     }
   };
 
   if (!user) return <h2 className="text-center mt-5">Loading profile...</h2>;
 
+  // Determine what to show for avatar
+  const avatarToShow = avatarPreview || (user.avatarUrl ? `http://localhost:3001/uploads/${user.avatarUrl}` : '/placeholder.png');
+
   return (
     <div className="container mt-5 pt-5 d-flex justify-content-center align-item-center">
+      <style>
+        {`
+          .avatar-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          }
+          .avatar-hover:hover .avatar-edit-overlay {
+            opacity: 1 !important;
+          }
+        `}
+      </style>
       <div className="row justify-content-center w-100" style={{maxWidth: 720}}>
         <div className="col-12">
           <div className="card shadow-lg p-4">
-            <h2 className="text-center mb-4">👤 My Profile</h2>
+                         <div className="position-relative mb-4">
+               <h2 className="mb-0 text-center">👤 My Profile</h2>
+               <div 
+                 className="position-absolute top-0 end-0"
+                 style={{ cursor: 'pointer' }}
+                 onClick={toggleEditMode}
+                 title={isEditing ? 'Cancel' : 'Edit Profile'}
+               >
+                 {isEditing ? '✕' : '✏️'}
+               </div>
+             </div>
 
             {/* Profile Info */}
             <div className="mb-4">
-              <h5 className="mb-3">Profile Information</h5>
-              <div className="mb-3 d-flex align-items-center">
-                {avatarPreview || user.avatarUrl ? (
-                  <div
-                    onClick={openFilePicker}
-                    style={{ width: 80, height: 80, borderRadius: '50%', marginRight: 16, position: 'relative', cursor: 'pointer' }}
-                  >
-                    <img
-                      src={avatarPreview || `http://localhost:3001/uploads/${user.avatarUrl}`}
-                      alt="avatar"
-                      style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-                    />
-                                         {/* Edit badge */}
-                     <span
-                       style={{ position: 'absolute', bottom: -4, right: -4, background: '#0d6efd', color: '#fff', borderRadius: 12, fontSize: 10, padding: '2px 6px' }}
+              <div className="mb-3 d-flex justify-content-center align-items-center">
+                 <div
+                   onClick={isEditing ? openFilePicker : undefined}
+                   style={{ 
+                     width: 150, 
+                     height: 150, 
+                     borderRadius: '50%', 
+                     marginRight: 16, 
+                     position: 'relative', 
+                     cursor: isEditing ? 'pointer' : 'default',
+                     border: isEditing ? '3px solid #0d6efd' : '3px solid #e9ecef',
+                     transition: 'all 0.2s ease'
+                   }}
+                   className={isEditing ? 'avatar-hover' : ''}
+                 >
+                   {avatarToShow && avatarToShow !== '/placeholder.png' ? (
+                     <img
+                       src={avatarToShow}
+                       alt="avatar"
+                       style={{ 
+                         width: '100%', 
+                         height: '100%', 
+                         borderRadius: '50%', 
+                         objectFit: 'contain',
+                         backgroundColor: '#f8f9fa'
+                       }}
+                       onError={(e) => {
+                         e.target.style.display = 'none';
+                         e.target.nextSibling.style.display = 'flex';
+                       }}
+                     />
+                   ) : (
+                     <div
+                       className="d-flex align-items-center justify-content-center"
+                       style={{ 
+                         width: '100%', 
+                         height: '100%', 
+                         borderRadius: '50%', 
+                         backgroundColor: '#f8f9fa', 
+                         color: '#6c757d', 
+                         fontWeight: 600, 
+                         fontSize: 20
+                       }}
                      >
-                       Edit
-                     </span>
-                  </div>
-                ) : (
-                  <div
-                    className="d-flex align-items-center justify-content-center"
-                    onClick={openFilePicker}
-                    style={{ width: 80, height: 80, borderRadius: '50%', backgroundColor: '#e9ecef', color: '#495057', fontWeight: 600, fontSize: 20, marginRight: 16, cursor: 'pointer', position: 'relative' }}
-                  >
-                    {((user.name || user.email || '?')
-                      .split(' ')
-                      .map(w => w[0])
-                      .join('')
-                      .slice(0, 2)
-                    ).toUpperCase()}
-                    <span
-                      style={{ position: 'absolute', bottom: -4, right: -4, background: '#0d6efd', color: '#fff', borderRadius: 12, fontSize: 10, padding: '2px 6px' }}
-                    >
-                      Add
-                    </span>
-                  </div>
-                )}
-                <div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                                         onChange={async (e) => {
-                       const file = e.target.files?.[0] || null;
-                       if (!file) { setAvatarPreview(""); return; }
-                       const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-                       const maxSizeBytes = 5 * 1024 * 1024; // 5MB
-                       if (!validTypes.includes(file.type)) {
-                         setMessage("Only JPG, PNG, WEBP, GIF images are allowed");
-                         e.target.value = "";
-                         return;
-                       }
-                       if (file.size > maxSizeBytes) {
-                         setMessage("Image is too large. Max 5MB");
-                         e.target.value = "";
-                         return;
-                       }
-                       setMessage("");
-                       const reader = new FileReader();
-                       reader.onload = () => setAvatarPreview(reader.result);
-                       reader.readAsDataURL(file);
-                       await uploadSelectedFile(file);
-                     }}
-                  />
-                  {user.avatarUrl && (
-                    <div className="mt-2">
-                      <button className="btn btn-outline-danger btn-sm px-2 py-1" onClick={handleAvatarDelete}>
-                        Delete Image
-                      </button>
-                    </div>
-                  )}
-                  {/* Buttons removed: avatar click handles upload; delete via overlay button */}
-                </div>
-              </div>
+                       {((user.name || user.email || '?')
+                         .split(' ')
+                         .map(w => w[0])
+                         .join('')
+                         .slice(0, 2)
+                       ).toUpperCase()}
+                     </div>
+                   )}
+                   
+                   {/* Edit overlay */}
+                   {isEditing && (
+                     <div
+                       style={{
+                         position: 'absolute',
+                         top: 0,
+                         left: 0,
+                         right: 0,
+                         bottom: 0,
+                         background: 'rgba(13, 110, 253, 0.8)',
+                         display: 'flex',
+                         alignItems: 'center',
+                         justifyContent: 'center',
+                         color: 'white',
+                         fontSize: '12px',
+                         fontWeight: 'bold',
+                         borderRadius: '50%',
+                         opacity: 0,
+                         transition: 'opacity 0.2s ease'
+                       }}
+                       className="avatar-edit-overlay"
+                     >
+                       {avatarToShow && avatarToShow !== '/placeholder.png' ? 'Change' : 'Add'}
+                     </div>
+                   )}
+                   
+                   {/* Remove indicator for existing avatar */}
+                   {isEditing && avatarToShow && avatarToShow !== '/placeholder.png' && (
+                     <div
+                       style={{
+                         position: 'absolute',
+                         top: -8,
+                         right: -8,
+                         background: '#dc3545',
+                         color: 'white',
+                         borderRadius: '50%',
+                         width: 24,
+                         height: 24,
+                         display: 'flex',
+                         alignItems: 'center',
+                         justifyContent: 'center',
+                         fontSize: 12,
+                         cursor: 'pointer',
+                         border: '2px solid white',
+                         boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                       }}
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         handleAvatarDelete();
+                       }}
+                       title="Remove avatar"
+                     >
+                       ✕
+                     </div>
+                   )}
+                 </div>
+                 
+                 <div className="flex-grow-1">
+                   {isEditing && (
+                     <input
+                       ref={fileInputRef}
+                       type="file"
+                       accept="image/*"
+                       style={{ display: 'none' }}
+                       onChange={handleFileSelect}
+                     />
+                   )}
+                   
+                 </div>
+               </div>
+              
               <div className="row g-3">
                 <div className="col-md-6">
                   <label className="form-label">Name</label>
-                  <input type="text" className="form-control" value={user.name} disabled />
+                  {isEditing ? (
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      value={editData.name}
+                      onChange={(e) => setEditData({...editData, name: e.target.value})}
+                    />
+                  ) : (
+                    <input type="text" className="form-control" value={user.name} disabled />
+                  )}
                 </div>
                 <div className="col-md-6">
                   <label className="form-label">Email</label>
@@ -202,66 +398,55 @@ let Profile = () => {
               </div>
             </div>
 
-            <hr />
+            {/* Password Change Section - Only show in edit mode */}
+            {isEditing && (
+              <>
+                <hr />
+                <div className="mb-4">
+                  <h5>🔑 Change Password</h5>
+                  <div className="row g-2">
+                    <div className="col-12 col-md-6">
+                      <input
+                        type="password"
+                        className="form-control"
+                        placeholder="Old Password"
+                        value={editData.oldPassword}
+                        onChange={(e) => setEditData({...editData, oldPassword: e.target.value})}
+                      />
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <input
+                        type="password"
+                        className="form-control"
+                        placeholder="New Password"
+                        value={editData.newPassword}
+                        onChange={(e) => setEditData({...editData, newPassword: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <small className="text-muted">Leave blank if you don't want to change password</small>
+                </div>
+              </>
+            )}
 
-            {/* Change Name Section */}
-            <div className="mb-4">
-              <h5>✏️ Update Name</h5>
-              <div className="row g-2">
-                <div className="col-12 col-sm-8">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter your name"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                  />
-                </div>
-                <div className="col-12 col-sm-4 d-grid">
-                  <button className="btn btn-primary" onClick={handleNameChange}>
-                    Save
-                  </button>
-                </div>
+            {/* Save Button - Only show in edit mode */}
+            {isEditing && (
+              <div className="d-grid gap-2">
+                <button 
+                  className="btn btn-success btn-lg" 
+                  onClick={handleSave}
+                >
+                  💾 Save All Changes
+                </button>
               </div>
-            </div>
-
-            <hr />
-
-            {/* Change Password Section */}
-            <div>
-              <h5>🔑 Change Password</h5>
-              <div className="row g-2">
-                <div className="col-12 col-md-6">
-                  <input
-                    type="password"
-                    className="form-control"
-                    placeholder="Old Password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                  />
-                </div>
-                <div className="col-12 col-md-6">
-                  <input
-                    type="password"
-                    className="form-control"
-                    placeholder="New Password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                </div>
-                <div className="col-12 d-grid">
-                  <button
-                    className="btn btn-warning"
-                    onClick={handlePasswordChange}
-                  >
-                    Update Password
-                  </button>
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* Message Alert */}
-            {message && <div className="alert alert-info mt-3">{message}</div>}
+            {message && (
+              <div className={`alert ${message.includes('successfully') ? 'alert-success' : 'alert-info'} mt-3`}>
+                {message}
+              </div>
+            )}
           </div>
         </div>
       </div>

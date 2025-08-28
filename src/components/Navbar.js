@@ -1,11 +1,38 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { logout } from '../utils/api';
 
 let Navbar = () => {
+  const [user, setUser] = useState(null);
 
   // Safely parse user from localStorage
-  const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
+  const updateUserFromStorage = () => {
+    const storedUser = localStorage.getItem("user");
+    setUser(storedUser ? JSON.parse(storedUser) : null);
+  };
+
+  useEffect(() => {
+    updateUserFromStorage();
+    
+    // Listen for profile updates
+    const handleProfileUpdate = (event) => {
+      setUser(event.detail);
+    };
+    
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
+  }, []);
+
+  // Get avatar URL with fallback to placeholder
+  const getAvatarUrl = () => {
+    if (user?.avatarUrl) {
+      return `http://localhost:3001/uploads/${user.avatarUrl}`;
+    }
+    return '/placeholder.png';
+  };
 
   const handleLogout = () => {
     logout();
@@ -38,44 +65,28 @@ let Navbar = () => {
 
           {/* Profile dropdown */}
           <div className="dropdown">
-            {user ? (
-              user.avatarUrl ? (
-                <img
-                  src={user.avatarUrl}
-                  alt="profile"
-                  className="profile-avatar dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                />
-              ) : (
-                <div
-                  className="dropdown-toggle d-flex align-items-center justify-content-center"
-                  data-bs-toggle="dropdown"
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    backgroundColor: '#e9ecef',
-                    color: '#495057',
-                    fontWeight: 600,
-                    fontSize: 14
-                  }}
-                >
-                  {((user.name || user.email || '?')
-                    .split(' ')
-                    .map(w => w[0])
-                    .join('')
-                    .slice(0, 2)
-                  ).toUpperCase()}
-                </div>
-              )
-            ):(
+                        {user ? (
+              <img
+                src={getAvatarUrl()}
+                alt="profile"
+                className="profile-avatar dropdown-toggle"
+                data-bs-toggle="dropdown"
+                style={{
+                  objectFit: 'contain',
+                  backgroundColor: '#f8f9fa'
+                }}
+                onError={(e) => {
+                  e.target.src = '/placeholder.png';
+                }}
+              />
+            ) : (
               <Link to='/login'>
                 <img
-                src="https://icons.veryicon.com/png/o/miscellaneous/icon-icon-of-ai-intelligent-dispensing/login-user-name-1.png"
-                alt="profile"
-                className="profile-avatar"
-              />
-            </Link>
+                  src="/placeholder.png"
+                  alt="profile"
+                  className="profile-avatar"
+                />
+              </Link>
             )}
               {user && (
             <ul className="dropdown-menu dropdown-menu-end">
