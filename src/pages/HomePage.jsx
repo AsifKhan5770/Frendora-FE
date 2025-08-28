@@ -154,15 +154,6 @@ let HomePage = () => {
                 <h3 className="h4 fw-semibold mb-0" style={{ color: '#1a1a1a' }}>
                   📚 {data.length} {data.length === 1 ? 'Post' : 'Posts'} Found
                 </h3>
-                {search && (
-                  <button 
-                    className="btn btn-sm rounded-pill px-3"
-                    style={{ backgroundColor: '#fafafa', color: '#737373', border: '1px solid #dbdbdb' }}
-                    onClick={() => { setSearch(''); fetchPosts(); }}
-                  >
-                    Clear Search
-                  </button>
-                )}
               </div>
             </div>
           </div>
