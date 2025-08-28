@@ -44,38 +44,20 @@ let HomePage = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className="container-fluid py-5 mt-5">
+      <div className="container-fluid mt-5">
         <div className="container">
           <div className="row justify-content-center text-center">
             <div className="col-lg-8">
-              <h1 className="display-4 fw-bold mb-4" style={{ color: 'white' }}>
-                ✨ Welcome to Frendora
-              </h1>
-              <p className="lead mb-4" style={{ color: 'white' }}>
-                Discover amazing stories, share your experiences, and connect with creators from around the world.
-              </p>
-              <div className="d-flex justify-content-center">
-                <Link to="/create" className="btn btn-lg px-4 py-3 me-3 rounded-pill fw-semibold" style={{ backgroundColor: '#ff69b4', border: 'none', color: 'white' }}>
-                  📝 Create Post
-                </Link>
-                <Link to="/posts" className="btn btn-lg px-4 py-3 rounded-pill fw-semibold" style={{ backgroundColor: '#ff69b4', border: 'none', color: 'white' }}>
-                  🔍 Browse All
-                </Link>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container py-5">
+      <div className="container">
         {/* Search Section */}
         <div className="row justify-content-center mb-5">
           <div className="col-lg-8 col-md-10">
-            <div className="text-center mb-4">
-              <h2 className="h3 fw-bold mb-3" style={{ color: 'white' }}>🔍 Search Posts</h2>
-              <p style={{ color: 'white' }}>Find exactly what you're looking for</p>
-            </div>
             <div className="position-relative">
               <input
                 type="text"
@@ -89,7 +71,7 @@ let HomePage = () => {
           </div>
         </div>
 
-                {/* Results Count */}
+        {/* Results Count */}
         {data.length > 0 && (
           <div className="row mb-4">
             <div className="col-12">
@@ -177,11 +159,16 @@ let HomePage = () => {
                   : 'Be the first to create an amazing post!'
                 }
               </p>
-              {!search && (
-                <Link to="/create" className="btn btn-lg px-4 py-2 rounded-pill" style={{ backgroundColor: '#0095f6', border: 'none', color: 'white' }}>
-                  Create Your First Post
-                </Link>
-              )}
+                             {!search && (
+                 <div className="d-flex gap-3 justify-content-center">
+                   <Link to="/login" className="btn btn-lg px-4 py-2 rounded-pill" style={{ backgroundColor: '#0095f6', border: 'none', color: 'white' }}>
+                     🔐 Login to Create Posts
+                   </Link>
+                   <Link to="/signup" className="btn btn-lg px-4 py-2 rounded-pill" style={{ backgroundColor: '#ff69b4', border: 'none', color: 'white' }}>
+                     ✨ Sign Up to Join
+                   </Link>
+                 </div>
+               )}
             </div>
           </div>
         )}
