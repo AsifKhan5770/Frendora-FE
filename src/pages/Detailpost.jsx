@@ -33,7 +33,7 @@ let DetailPost = () => {
       {data ? (
         <div className="card shadow-lg w-100" style={{ maxWidth: "900px" }}>
           {data.media && data.media.length > 0 && (
-            <div className="card-img-top">
+            <div className="card-img-top" style={{ height: '400px', overflow: 'hidden' }}>
               <MediaCarousel media={data.media} isDetail={true} />
             </div>
           )}

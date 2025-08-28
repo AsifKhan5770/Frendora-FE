@@ -58,6 +58,10 @@ let CreatePost = () => {
     e.preventDefault();
 
     try {
+      console.log('Creating post with:');
+      console.log('- selectedFiles:', selectedFiles);
+      console.log('- filePreviews:', filePreviews);
+      
       // Create FormData for file upload
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title);
@@ -65,9 +69,15 @@ let CreatePost = () => {
       formDataToSend.append('author', formData.author);
       
       // Append all selected files
-      selectedFiles.forEach(file => {
+      selectedFiles.forEach((file, index) => {
+        console.log(`Appending file ${index}:`, file.name, file.size, file.type);
         formDataToSend.append('media', file);
       });
+
+      console.log('FormData entries:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
+      }
 
       const res = await fetch("http://localhost:3001/api/posts", {
         method: "POST",
@@ -190,13 +200,23 @@ let CreatePost = () => {
                             src={preview.preview} 
                             alt={`Preview ${index + 1}`} 
                             className="card-img-top" 
-                            style={{ height: '150px', objectFit: 'cover' }}
+                            style={{ 
+                              height: '200px', 
+                              width: '100%',
+                              objectFit: 'contain',
+                              backgroundColor: '#f8f9fa'
+                            }}
                           />
                         ) : (
                           <video 
                             src={preview.preview} 
                             className="card-img-top" 
-                            style={{ height: '150px', objectFit: 'cover' }}
+                            style={{ 
+                              height: '200px', 
+                              width: '100%',
+                              objectFit: 'contain',
+                              backgroundColor: '#f8f9fa'
+                            }}
                             controls
                           />
                         )}

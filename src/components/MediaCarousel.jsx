@@ -49,13 +49,19 @@ const MediaCarousel = ({ media, postId, isDetail = false }) => {
                 src={`http://localhost:3001/uploads/${item.filename}`} 
                 alt={item.originalName}
                 className={`d-block w-100 ${isDetail ? '' : 'h-100'}`}
-                style={{ objectFit: 'cover' }}
+                style={{ 
+                  objectFit: 'contain',
+                  backgroundColor: '#f8f9fa'
+                }}
               />
             ) : (
               <video 
                 src={`http://localhost:3001/uploads/${item.filename}`} 
                 className={`d-block w-100 ${isDetail ? '' : 'h-100'}`}
-                style={{ objectFit: 'cover' }}
+                style={{ 
+                  objectFit: 'contain',
+                  backgroundColor: '#f8f9fa'
+                }}
                 muted={!isDetail}
                 loop={!isDetail}
                 controls={isDetail}
@@ -73,33 +79,32 @@ const MediaCarousel = ({ media, postId, isDetail = false }) => {
 
       {media.length > 1 && (
         <>
-          <button 
-            className="carousel-control-prev" 
-            type="button" 
-            data-bs-target={`#${carouselId}`} 
+          <button
+            className="carousel-control-prev"
+            type="button"
+            data-bs-target={`#${carouselId}`}
             data-bs-slide="prev"
           >
             <span className="carousel-control-prev-icon" aria-hidden="true"></span>
             <span className="visually-hidden">Previous</span>
           </button>
-          
-          <button 
-            className="carousel-control-next" 
-            type="button" 
-            data-bs-target={`#${carouselId}`} 
+          <button
+            className="carousel-control-next"
+            type="button"
+            data-bs-target={`#${carouselId}`}
             data-bs-slide="next"
           >
             <span className="carousel-control-next-icon" aria-hidden="true"></span>
             <span className="visually-hidden">Next</span>
           </button>
-
+          
           <div className="carousel-indicators">
             {media.map((_, index) => (
-              <button 
+              <button
                 key={index}
-                type="button" 
-                data-bs-target={`#${carouselId}`} 
-                data-bs-slide-to={index} 
+                type="button"
+                data-bs-target={`#${carouselId}`}
+                data-bs-slide-to={index}
                 className={index === 0 ? 'active' : ''}
                 aria-current={index === 0 ? 'true' : 'false'}
                 aria-label={`Slide ${index + 1}`}
