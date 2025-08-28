@@ -35,7 +35,7 @@ const UserLogin = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       setSuccess("Login successful!");
-      setTimeout(() => navigate("/posts"), 1000); // redirect to posts page
+      setTimeout(() => navigate("/"), 1000); // redirect to home page
     } catch (err) {
       setError(err.message);
     }

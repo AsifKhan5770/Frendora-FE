@@ -144,7 +144,7 @@ let EditPost = () => {
       <div className="container-fluid mt-5 pt-4">
         <div className="row justify-content-center">
           <div className="col-md-8">
-            <h2 className="text-center mb-4">✏️ Edit Post</h2>
+            <h2 className="text-center mb-4">✏️ Edit</h2>
             
             {formData ? (
               <form onSubmit={handleSubmit}>

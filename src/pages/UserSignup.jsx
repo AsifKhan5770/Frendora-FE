@@ -62,8 +62,8 @@ const UserSignup = () => {
 
       setSuccess("Account created successfully! Redirecting...");
       
-      // ✅ Redirect to dashboard or home
-      setTimeout(() => navigate("/posts"), 1000);
+      // ✅ Redirect to home page
+      setTimeout(() => navigate("/"), 1000);
     } catch (err) {
       setError(err.message);
     }

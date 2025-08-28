@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import ErrorPage from './pages/ErrorPage';
-import ListPosts from './pages/Listposts';
 import DetailPost from './pages/Detailpost';
 import CreatePost from './pages/Createpost';
 import EditPost from './pages/Editpost';
@@ -27,7 +26,6 @@ function App() {
         <Route path="*" element={<ErrorPage />} />
 
         {/* Protected Routes */}
-        <Route path="/posts" element={<ProtectedRoute><ListPosts /></ProtectedRoute>} />
         <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
         <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
