@@ -39,12 +39,35 @@ let Navbar = () => {
           {/* Profile dropdown */}
           <div className="dropdown">
             {user ? (
-            <img
-              src="https://i.pravatar.cc/40?img=12"
-              alt="profile"
-              className="profile-avatar dropdown-toggle"
-              data-bs-toggle="dropdown"
-            />
+              user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt="profile"
+                  className="profile-avatar dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                />
+              ) : (
+                <div
+                  className="dropdown-toggle d-flex align-items-center justify-content-center"
+                  data-bs-toggle="dropdown"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    backgroundColor: '#e9ecef',
+                    color: '#495057',
+                    fontWeight: 600,
+                    fontSize: 14
+                  }}
+                >
+                  {((user.name || user.email || '?')
+                    .split(' ')
+                    .map(w => w[0])
+                    .join('')
+                    .slice(0, 2)
+                  ).toUpperCase()}
+                </div>
+              )
             ):(
               <Link to='/login'>
                 <img

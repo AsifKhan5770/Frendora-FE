@@ -1,16 +1,20 @@
 // Utility function for making authenticated API calls
 export const authenticatedFetch = async (url, options = {}) => {
   const token = localStorage.getItem('token');
-  
   if (!token) {
     throw new Error('No authentication token found');
   }
 
+  const isFormData = options && options.body instanceof FormData;
+
   const headers = {
-    'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`,
     ...options.headers
   };
+  // Only set JSON Content-Type if not sending FormData and not already provided
+  if (!isFormData && !('Content-Type' in headers)) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   const response = await fetch(url, {
     ...options,
