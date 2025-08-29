@@ -78,6 +78,12 @@ export const apiFetch = async (endpoint, options = {}) => {
 
 // Utility function to get upload URL with fallback
 export const getUploadUrl = (filename) => {
+  // If filename is already a full URL (Cloudinary), return it as is
+  if (filename && (filename.startsWith('http://') || filename.startsWith('https://'))) {
+    return filename;
+  }
+  
+  // Fallback to local uploads directory (for development)
   if (!config.UPLOAD_URL) {
     console.error('❌ Cannot generate upload URL: UPLOAD_URL is not configured');
     return '';
