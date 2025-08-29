@@ -27,10 +27,14 @@ export const authenticatedFetch = async (endpoint, options = {}) => {
   const defaultOptions = {
     headers: {
       'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
       ...options.headers,
     },
   };
+
+  // Only set Content-Type if not uploading files
+  if (!options.body || !(options.body instanceof FormData)) {
+    defaultOptions.headers['Content-Type'] = 'application/json';
+  }
 
   // Merge options, but let options.headers override default headers
   const finalOptions = {

@@ -41,7 +41,7 @@ const UserSignup = () => {
     }
 
     try {
-      const res = await apiFetch("users/register", {
+      const res = await apiFetch("users", {
         method: "POST",
         body: JSON.stringify({
           name: formData.name,

@@ -109,20 +109,21 @@ let EditPost = () => {
       formDataToSend.append('author', formData.author);
       
       // Append all selected files
-      selectedFiles.forEach(file => {
+      console.log('Selected files to upload:', selectedFiles);
+      selectedFiles.forEach((file, index) => {
+        console.log(`Appending file ${index}:`, file.name, file.type, file.size);
         formDataToSend.append('media', file);
       });
 
       // Append existing media that should be kept
-      existingMediaToKeep.forEach(media => {
+      console.log('Existing media to keep:', existingMediaToKeep);
+      existingMediaToKeep.forEach((media, index) => {
+        console.log(`Appending existing media ${index}:`, media);
         formDataToSend.append('existingMedia', JSON.stringify(media));
       });
 
-      let res = await fetch(`${config.API_BASE_URL}/posts/${id}`, {
+      let res = await authenticatedFetch(`posts/${id}`, {
         method: "PUT",
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: formDataToSend,
       });
 
