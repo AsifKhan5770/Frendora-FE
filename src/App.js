@@ -12,10 +12,11 @@ import UserProfile from './pages/UserProfile';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import ConfigErrorBoundary from './components/ConfigErrorBoundary';
 
 function App() {
   return (
-    <>
+    <ConfigErrorBoundary>
       <Navbar />
       <Routes>
         {/* Public Routes - No authentication required */}
@@ -30,7 +31,7 @@ function App() {
         <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
       </Routes>
-    </>
+    </ConfigErrorBoundary>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import config from '../config/config';
 
 let CreatePost = () => {
   const [formData, setFormData] = useState({
@@ -69,7 +70,7 @@ let CreatePost = () => {
         formDataToSend.append('media', file);
       });
 
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/posts`, {
+      const res = await fetch(`${config.API_BASE_URL}/posts`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -94,7 +95,7 @@ let CreatePost = () => {
         setFormData({ title: "", description: "", author: "" }); // reset form
         setSelectedFiles([]);
         setFilePreviews([]);
-        navigate("/posts"); // redirect to home page
+        navigate("/"); // redirect to home page
       } else {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'alert alert-danger position-fixed top-0 start-50 translate-middle-x mt-3';

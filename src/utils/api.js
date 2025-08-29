@@ -1,8 +1,21 @@
+import config from '../config/config';
+
 // API utility functions
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = config.API_BASE_URL;
+
+// Debug logging to help identify configuration issues
+if (!API_BASE_URL) {
+  console.error('❌ API_BASE_URL is not configured!');
+  console.error('Please check your configuration or environment variables');
+  console.error('Current config:', config);
+}
 
 // Authenticated fetch function
 export const authenticatedFetch = async (endpoint, options = {}) => {
+  if (!API_BASE_URL) {
+    throw new Error('API_BASE_URL is not configured. Please check your environment variables.');
+  }
+  
   const token = localStorage.getItem('token');
   
   if (!token) {
@@ -34,6 +47,10 @@ export const authenticatedFetch = async (endpoint, options = {}) => {
 
 // Regular fetch function (for non-authenticated requests)
 export const apiFetch = async (endpoint, options = {}) => {
+  if (!API_BASE_URL) {
+    throw new Error('API_BASE_URL is not configured. Please check your environment variables.');
+  }
+  
   const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
   const defaultOptions = {
@@ -57,8 +74,12 @@ export const apiFetch = async (endpoint, options = {}) => {
 
 // Utility function to get upload URL with fallback
 export const getUploadUrl = (filename) => {
-  const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
-  return `${baseUrl.replace('/api', '')}/uploads/${filename}`;
+  if (!config.UPLOAD_URL) {
+    console.error('❌ Cannot generate upload URL: UPLOAD_URL is not configured');
+    return '';
+  }
+  
+  return `${config.UPLOAD_URL}/uploads/${filename}`;
 };
 
 // Check if user is authenticated

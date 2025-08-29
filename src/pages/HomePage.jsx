@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { apiFetch, isAuthenticated } from '../utils/api';
+import { apiFetch, authenticatedFetch, isAuthenticated } from '../utils/api';
 import MediaCarousel from '../components/MediaCarousel';
 
 let HomePage = () => {
@@ -51,18 +51,23 @@ let HomePage = () => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     try {
-      const res = await apiFetch(`posts/${id}`, {
+      const res = await authenticatedFetch(`posts/${id}`, {
         method: "DELETE",
       });
 
       if (res.ok) {
         setData((prev) => prev.filter((item) => item._id !== id));
         setOpenMenuId(null); // Close menu after deletion
+        // Show success message
+        alert("✅ Post deleted successfully!");
       } else {
-        console.error("Failed to delete post");
+        const errorData = await res.json();
+        console.error("Failed to delete post:", errorData);
+        alert(`❌ Failed to delete post: ${errorData.message || 'Unknown error'}`);
       }
     } catch (err) {
       console.error("Error:", err);
+      alert("⚠️ Error while deleting post");
     }
   };
 
@@ -112,6 +117,9 @@ let HomePage = () => {
                   <p className="lead mb-4" style={{ color: 'white' }}>
                     Manage all posts, create new content, and oversee your Frendora platform.
                   </p>
+                  <Link to="/create" className="btn btn-lg px-4 py-2 mb-4 rounded-pill" style={{ backgroundColor: '#0095f6', border: 'none', color: 'white' }}>
+                    Create Your First Post
+                  </Link>
                 </>
               ) : (
                 <>

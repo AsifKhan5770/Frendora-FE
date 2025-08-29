@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { authenticatedFetch, getUploadUrl } from '../utils/api';
+import config from '../config/config';
 
 let EditPost = () => {
   let [formData, setFormData] = useState({
@@ -117,7 +118,7 @@ let EditPost = () => {
         formDataToSend.append('existingMedia', JSON.stringify(media));
       });
 
-      let res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/posts/${id}`, {
+      let res = await fetch(`${config.API_BASE_URL}/posts/${id}`, {
         method: "PUT",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -127,7 +128,7 @@ let EditPost = () => {
 
       if (res.ok) {
         alert("✅ post updated successfully!");
-        navigate("/posts"); // redirect back to list
+        navigate("/"); // redirect back to list
       } else {
         const errorData = await res.json();
         console.error('Update failed:', errorData);
