@@ -5,7 +5,7 @@ const PublicRoute = ({ children }) => {
   const user = localStorage.getItem("user");
   const isLoggedIn = !!(token && user);
   
-  return !isLoggedIn ? children : <Navigate to="/posts" />;
+  return !isLoggedIn ? children : <Navigate to="/" />;
 };
 
 export default PublicRoute;
